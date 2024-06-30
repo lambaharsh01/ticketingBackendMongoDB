@@ -3,7 +3,7 @@ const express=require('express');
 const app=express();
 
 const hostname='0.0.0.0';
-const port=3000
+const port=3000;
 
 class Initialise{
     constructor(){
@@ -24,23 +24,24 @@ class Initialise{
     }
 
     routePages(){
-        this.routes.createProduct=require('./routes/createProduct/createProduct');
+        this.routes.users=require('./routes/users');
     }
 
     routeConnection(){
-        app.use('/api/createProduct', this.routes.createProduct);
+        app.use('/api/user', this.routes.users);
     }
 
     connection(){
-        require('./utils/connection');
+        require('./utils/DBconnection/connection');
     }
 
     listner(){
-        app.listen( port , hostname, ()=>{
-            console.log('Listening on '+ port)
+        app.listen( process.env.PORT , ()=>{
+            console.log('Listening on '+ process.env.PORT)
         })
     }
 }
 
 
-new Initialise()
+new Initialise();
+

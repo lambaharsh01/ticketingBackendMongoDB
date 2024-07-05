@@ -5,6 +5,8 @@ const { otpMailOptions, mailTransport} =require('../../utils/mailer');
 exports.userEmailVerification= async(req, res)=>{
   try{
 
+console.log(req.body)
+
     const emailValidationSchema = joi.object({
       userEmail: joi.string().email().required().trim(),
       userName: joi.string().required().trim()
@@ -29,7 +31,7 @@ exports.userEmailVerification= async(req, res)=>{
                 resolve(info);
         }); });
     
-        let exisitngUser=await users.findOne({}, {userEmail:value.userEmail});
+        let exisitngUser=await users.findOne({userEmail:value.userEmail});
 
         baseJsonData.timeStamp=new Date().getTime();
 
@@ -37,7 +39,7 @@ exports.userEmailVerification= async(req, res)=>{
           delete baseJsonData.userEmail;
           await users.updateOne({userEmail:value.userEmail}, baseJsonData);
         }else{
-          await users.create(baseJsonData)
+          await users.create(baseJsonData);
         }
 
         return res.status(200).json({code:200, message:'OTP has been Successfully Sent'});
@@ -53,7 +55,6 @@ exports.varifyEmail= async(req,res)=>{
   try{
 
     let {otp, userEmail}=req.body;
-
     let matchingOtp=await users.findOne({otp, userEmail});
 
     if(matchingOtp){
@@ -85,20 +86,19 @@ exports.addUserDetails= async(req,res)=>{
             joi.string().valid('Female'),
             joi.string().valid('Other')
             ).required(),
-      age: joi.number().min(10).max(60).required(),
-      district:joi.string().required().trim(),
-      occupation:joi.string().required().trim()
+      dateOfBirth: joi.number().min(10).max(60).required(),
+      district:joi.string().required().trim()
     });
 
     const {error, value} = userInfoSchema.validate(req.body);
 
     if(error)
-      return res.status(400).json({success:false, code:400, message:error.details[0].message});
+      return res.status(200).json({success:false, code:400, message:error.details[0].message});
 
     let backendValidation= await users.findOne({otpVarificationStatus:true, userEmail});
 
     if(!backendValidation)
-      return res.status(409).json({success:false, code:409, message:'Can not proceed ahead previous authentication was not completed'});
+      return res.status(200).json({success:false, code:409, message:'Can not proceed ahead previous authentication was not completed'});
 
     await users.updateOne({userEmail}, value);
 

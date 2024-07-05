@@ -5,8 +5,6 @@ const { otpMailOptions, mailTransport} =require('../../utils/mailer');
 exports.userEmailVerification= async(req, res)=>{
   try{
 
-console.log(req.body)
-
     const emailValidationSchema = joi.object({
       userEmail: joi.string().email().required().trim(),
       userName: joi.string().required().trim()

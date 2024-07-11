@@ -25,10 +25,12 @@ class Initialise{
 
     routePages(){
         this.routes.users=require('./routes/users');
+        this.routes.tickets=require('./routes/tickets');
     }
 
     routeConnection(){
         app.use('/api/user', this.routes.users);
+        app.use('/api/tickets', this.routes.tickets);
     }
 
     connection(){

@@ -1,14 +1,10 @@
 const users=require('../../utils/DBschemas/users');
-const joi=require('joi');
 const { otpMailOptions, mailTransport} =require('../../utils/mailer');
+
+const {userInfoSchema, emailValidationSchema}=require('../../utils/joiSchemas');
 
 exports.userEmailVerification= async(req, res)=>{
   try{
-
-    const emailValidationSchema = joi.object({
-      userEmail: joi.string().email().required().trim(),
-      userName: joi.string().required().trim()
-    });
 
     const {error, value} = emailValidationSchema.validate(req.body);
 
@@ -72,21 +68,9 @@ exports.varifyEmail= async(req,res)=>{
   }
 }
 
-
 exports.addUserDetails= async(req,res)=>{
   try{
-
     let userEmail=req.params.userEmail;
-
-    let userInfoSchema=joi.object({
-      gender:joi.alternatives().try(
-            joi.string().valid('Male'),
-            joi.string().valid('Female'),
-            joi.string().valid('Other')
-            ).required(),
-      dateOfBirth: joi.number().min(10).max(60).required(),
-      district:joi.string().required().trim()
-    });
 
     const {error, value} = userInfoSchema.validate(req.body);
 
@@ -101,6 +85,32 @@ exports.addUserDetails= async(req,res)=>{
     await users.updateOne({userEmail}, value);
 
     return res.status(200).json({success:true, code:200, message:'Process Completed'});
+
+  }catch(err){
+    console.log(err);
+    return res.status(400).json({success:false, code:400, message:'Err: '+err});
+  }
+}
+
+
+exports.getAdminAuthenticationDate= async(req,res)=>{
+  try{
+    let userEmail=req.params.userEmail;
+
+    let userDetails=await users.findOne({userEmail});
+    if(!userDetails)
+      throw new Error('No user found');
+
+    let validUntil= userDetails.validUntil;
+    let ticketUploadInterval=isNaN(userDetails.ticketUploadInterval) ? '30': userDetails.ticketUploadInterval;
+
+    if(!validUntil)
+      return res.status(200).json({success:false, code:200, message:'Date not yet assigned'});
+
+    if(new Date(validUntil) < new Date())
+      return res.status(200).json({success:false, code:200, message:'Date not yet assigned'});
+
+      return res.status(200).json({success:true, code:200, data:{validUntil, ticketUploadInterval}, message:'Process Completed'});
 
   }catch(err){
     console.log(err);

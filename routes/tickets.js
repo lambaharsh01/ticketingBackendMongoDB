@@ -1,9 +1,11 @@
-const express=require('express');
-const router=express.Router();
+const express = require("express");
+const router = express.Router();
 
-const ticketController=require('../controllers/tickets/addTicket');
+const ticketController = require("../controllers/addTicket");
 
-router.post('/insertTicketTransactions', ticketController.insertTicketTransactions);
+router.post(
+  "/insertTicketTransactions",
+  ticketController.insertTicketTransactions
+);
 
-
-module.exports=router;
+module.exports = router;

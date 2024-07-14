@@ -1,11 +1,17 @@
-const express=require('express');
-const router=express.Router();
+const express = require("express");
+const router = express.Router();
 
-const createProductController=require('../controllers/users/addUser');
+const createUserController = require("../controllers/addUser");
 
-router.post('/userEmailVerification', createProductController.userEmailVerification);
-router.post('/varifyEmail', createProductController.varifyEmail);
-router.post('/addUserDetails/:userEmail', createProductController.addUserDetails);
+router.post(
+  "/userEmailVerification",
+  createUserController.userEmailVerification
+);
+router.post("/varifyEmail", createUserController.varifyEmail);
+router.put("/addUserDetails/:userEmail", createUserController.addUserDetails);
+router.get(
+  "/getAdminAuthenticationDate/:userEmail",
+  createUserController.getAdminAuthenticationDate
+);
 
-
-module.exports=router;
+module.exports = router;

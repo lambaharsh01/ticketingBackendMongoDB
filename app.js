@@ -2,8 +2,7 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
 
-const hostname = "0.0.0.0";
-const port = 3000;
+const port = process.env.PORT || 8080;
 
 class Initialise {
   constructor() {
@@ -18,15 +17,7 @@ class Initialise {
   dependencies() {
     require("dotenv").config({ path: "config.env" });
 
-    const cors = require("cors");
     const bodyParser = require("body-parser");
-
-    const corsOptions = {
-      origin: "*",
-      optionsSuccessStatus: 200,
-    };
-    app.use(cors(corsOptions));
-
     app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
     app.use(express.json());
   }
@@ -48,8 +39,8 @@ class Initialise {
   }
 
   listner() {
-    app.listen(process.env.PORT, () => {
-      console.log("Listening on " + process.env.PORT);
+    app.listen(port, () => {
+      console.log("Listening on " + port);
     });
   }
 }

@@ -18,6 +18,17 @@ class Initialise {
     require("dotenv").config({ path: "config.env" });
 
     const bodyParser = require("body-parser");
+    const cors = require("cors");
+
+    app.use(
+      cors({
+        origin: "*",
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
+      })
+    );
+
     app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
     app.use(express.json());
   }
